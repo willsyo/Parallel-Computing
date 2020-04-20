@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: /usr/lib/hadoop/client/ /usr/lib/hadoop-mapreduce/
+Main-Class: com.willis.tyler.hadoopmapreduce.Main
+
