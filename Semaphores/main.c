@@ -5,6 +5,7 @@
 #include <semaphore.h>
 
 #define TRUE 1
+#define DEBUGGING
 
 typedef int buffer_item;
 #define BUFFER_SIZE 5
@@ -31,12 +32,12 @@ int insert_item(buffer_item item) {
     buffer[insertPointer] = item;
     if (++insertPointer >= BUFFER_SIZE)
         insertPointer = 0;
-    
-    /*printf("Added item %d, Array contents are now: ", item);
-    for (int i = 0; i < BUFFER_SIZE - 1; i++){
-        printf("%d, ", buffer[i]);
-    } printf("%d\n", buffer[BUFFER_SIZE - 1]);
-    */
+    #ifdef DEBUGGING
+        printf("Added item %d, Array contents are now: ", item);
+        for (int i = 0; i < BUFFER_SIZE - 1; i++){
+            printf("%d, ", buffer[i]);
+        } printf("%d\n", buffer[BUFFER_SIZE - 1]);
+    #endif
     pthread_mutex_unlock(&insertThread);
     sem_post(&occupied);
     
@@ -49,14 +50,17 @@ int remove_item(buffer_item *item) {
     sem_wait(&occupied);
     pthread_mutex_lock(&removeThread);
     *item = buffer[removePointer];
-    //printf("Removed item %d, Array contents are now: ", buffer[removePointer]);
+    #ifdef DEBUGGING
+        printf("Removed item %d, Array contents are now: ", buffer[removePointer]);
+    #endif
     buffer[removePointer] = 0;
     if (++removePointer >= BUFFER_SIZE)
         removePointer = 0;
-    
-    /*for (int i = 0; i < BUFFER_SIZE - 1; i++){
-        printf("%d, ", buffer[i]);
-    } printf("%d\n", buffer[BUFFER_SIZE - 1]);*/
+    #ifdef DEBUGGING
+        for (int i = 0; i < BUFFER_SIZE - 1; i++){
+            printf("%d, ", buffer[i]);
+        } printf("%d\n", buffer[BUFFER_SIZE - 1]);
+    #endif
     
     pthread_mutex_unlock(&removeThread);
     sem_post(&empty);
@@ -72,15 +76,15 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Useage: <sleep time> <producer threads> <consumer threads>\n");
         return -1;
     }
-    
-    //printf("Creating threads...\n");
-            
+    #ifdef DEBUGGING
+        printf("Creating threads...\n");
+    #endif   
     sleepTime = atoi(argv[1]);
     producerThreads = atoi(argv[2]);
     consumerThreads = atoi(argv[3]);
-    
-    //printf("Sleep time is: %d\n# of producer threads: %d\n# of consumer threads: %d\n", sleepTime, producerThreads, consumerThreads);
-
+    #ifdef DEBUGGING
+        printf("Sleep time is: %d\n# of producer threads: %d\n# of consumer threads: %d\n", sleepTime, producerThreads, consumerThreads);
+    #endif
     pthread_mutex_init(&insertThread, NULL);
     pthread_mutex_init(&removeThread, NULL);
 
@@ -99,9 +103,9 @@ int main(int argc, char *argv[]) {
         pthread_create(&cons[j], NULL, consumer, NULL);
         sleep(1);
     }
-    
-    //printf("Done creating threads, going to sleep now!\n");
-
+    #ifdef DEBUGGING
+        printf("Done creating threads, going to sleep now!\n");
+    #endif
     /* Sleep for user specified time */
     sleep(sleepTime);
     return 0;
