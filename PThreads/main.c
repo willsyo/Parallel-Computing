@@ -1,11 +1,5 @@
 #include "matrix.h"
 
-/* 
- * File:   lab3.c
- * Author: Tyler Willis
- 
- */
-
 int main(int argc, char** argv) {
 
     NUM_THREADS = 8;
